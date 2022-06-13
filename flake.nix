@@ -19,7 +19,7 @@
       in
       rec {
         formatter = pkgs.nixpkgs-fmt;
-        defaultPackage = packages.unbound-adblockStevenBlack;
+        defaultPackage = packages.generate-unbound-conf;
 
         packages = flake-utils.lib.flattenTree {
 
@@ -31,6 +31,22 @@
               ${pkgs.gawk}/bin/awk '{sub(/\r$/,"")} {sub(/^127\.0\.0\.1/,"0.0.0.0")} BEGIN { OFS = "" } NF == 2 && $1 == "0.0.0.0" { print "local-zone: \"", $2, "\" static"}' $src | tr '[:upper:]' '[:lower:]' | sort -u >  $out
             '';
           };
+
+          generate-unbound-conf = with pkgs.python3Packages;
+            pkgs.python3Packages.buildPythonPackage rec {
+              pname = "generate-unbound-conf";
+              version = "1.0.0";
+              propagatedBuildInputs = [ setuptools ];
+              doCheck = false;
+              src = self;
+              meta = with pkgs.lib; {
+                description = "generate unbound conf from adlist";
+                homepage = "https://github.com/MayNiklas/nixos-adblock-unbound/";
+                platforms = platforms.unix;
+                maintainers = with maintainers; [ mayniklas ];
+              };
+            };
+
         };
 
       }
