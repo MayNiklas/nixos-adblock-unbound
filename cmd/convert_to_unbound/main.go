@@ -30,8 +30,9 @@ func Run() {
 
 		// if line begins with "0.0.0.0" it is a valid line
 		if strings.HasPrefix(line, "0.0.0.0") {
-			// format the line into the unbound format
-			fmt.Println(strings.Replace(line, "0.0.0.0 ", "local-zone: \"", 1) + "\" static")
+
+			// print the line formated as a unbound config
+			fmt.Println("local-zone: \"" + strings.Split(line, " ")[1] + "\" static\n")
 		}
 
 	}
