@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"strings"
 )
 
@@ -28,7 +27,6 @@ func Run() {
 
 	// going through the adlist line by line
 	for _, line := range strings.Split(string(data), "\n") {
-		log.Println(line)
 
 		// if line begins with "0.0.0.0" it is a valid line
 		if strings.HasPrefix(line, "0.0.0.0") {

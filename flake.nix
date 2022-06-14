@@ -19,7 +19,7 @@
       in
       rec {
         formatter = pkgs.nixpkgs-fmt;
-        defaultPackage = packages.generate-unbound-conf;
+        defaultPackage = packages.nixos-adblock-unbound;
 
         packages = flake-utils.lib.flattenTree {
 
