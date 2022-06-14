@@ -23,15 +23,6 @@
 
         packages = flake-utils.lib.flattenTree {
 
-          unbound-adblockStevenBlack = stdenv.mkDerivation {
-            name = "unbound-adblockStevenBlack";
-            src = (adblockStevenBlack + "/hosts");
-            phases = [ "installPhase" ];
-            installPhase = ''
-              ${self.packages.${system}.nixos-adblock-unbound}/bin/nixos-adblock-unbound --adlist ${adblockStevenBlack}/hosts | tr '[:upper:]' '[:lower:]' | sort -u >  $out
-            '';
-          };
-
           nixos-adblock-unbound = pkgs.buildGoModule rec {
             pname = "nixos-adblock-unbound";
             version = "1.0.0";
@@ -50,6 +41,15 @@
               platforms = platforms.unix;
               maintainers = with maintainers; [ MayNiklas ];
             };
+          };
+
+          unbound-adblockStevenBlack = stdenv.mkDerivation {
+            name = "unbound-adblockStevenBlack";
+            src = (adblockStevenBlack + "/hosts");
+            phases = [ "installPhase" ];
+            installPhase = ''
+              ${self.packages.${system}.nixos-adblock-unbound}/bin/nixos-adblock-unbound -adlist ${adblockStevenBlack}/hosts | tr '[:upper:]' '[:lower:]' | sort -u >  $out
+            '';
           };
 
         };
