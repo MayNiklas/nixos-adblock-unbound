@@ -28,24 +28,29 @@
             src = (adblockStevenBlack + "/hosts");
             phases = [ "installPhase" ];
             installPhase = ''
-              ${self.packages.${system}.generate-unbound-conf}/bin/generate-unbound-conf --adlist ${adblockStevenBlack}/hosts | tr '[:upper:]' '[:lower:]' | sort -u >  $out
+              ${self.packages.${system}.nixos-adblock-unbound}/bin/nixos-adblock-unbound --adlist ${adblockStevenBlack}/hosts | tr '[:upper:]' '[:lower:]' | sort -u >  $out
             '';
           };
 
-          generate-unbound-conf = with pkgs.python39Packages;
-            pkgs.python39Packages.buildPythonPackage rec {
-              pname = "generate-unbound-conf";
-              version = "1.0.0";
-              propagatedBuildInputs = [ setuptools validators ];
-              doCheck = false;
-              src = self;
-              meta = with pkgs.lib; {
-                description = "generate unbound conf from adlist";
-                homepage = "https://github.com/MayNiklas/nixos-adblock-unbound/";
-                platforms = platforms.unix;
-                maintainers = with maintainers; [ mayniklas ];
-              };
+          nixos-adblock-unbound = pkgs.buildGoModule rec {
+            pname = "nixos-adblock-unbound";
+            version = "1.0.0";
+            src = self;
+            vendorSha256 = "sha256-pQpattmS9VmO3ZIQUFn66az8GSmB4IvYhTTCFn6SUmo=";
+            installCheckPhase = ''
+              runHook preCheck
+              $out/bin/nixos-adblock-unbound -h
+              runHook postCheck
+            '';
+            doCheck = true;
+            meta = with pkgs.lib; {
+              description = "converts pihole lists to unbound";
+              homepage =
+                "https://github.com/MayNiklas/nixos-adblock-unbound";
+              platforms = platforms.unix;
+              maintainers = with maintainers; [ MayNiklas ];
             };
+          };
 
         };
 
