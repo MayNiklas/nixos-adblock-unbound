@@ -27,7 +27,7 @@
             pname = "nixos-adblock-unbound";
             version = "1.0.0";
             src = self;
-            vendorSha256 = "sha256-pQpattmS9VmO3ZIQUFn66az8GSmB4IvYhTTCFn6SUmo=";
+            vendorSha256 = null;
             installCheckPhase = ''
               runHook preCheck
               $out/bin/nixos-adblock-unbound -h
