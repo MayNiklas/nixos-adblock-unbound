@@ -33,8 +33,9 @@
                }:
                 let
                   lines = lib.splitString "\n" (lib.readFile adlist);
-                  domains = lib.filter (line: lib.hasPrefix "0.0.0.0" line) lines;
-                  config-file = builtins.toFile "config" (lib.concatStringsSep "\n" (map (domain: "local-zone: \"${(lib.strings.removePrefix "0.0.0.0 " domain)}\" static") domains));
+                  domains = map (line: (lib.strings.removePrefix "0.0.0.0 " line)) (lib.filter (line: lib.hasPrefix "0.0.0.0" line) lines);
+                  cleaned-domains = map (domain: (builtins.elemAt (lib.strings.splitString " " domain) 0)) domains;
+                  config-file = builtins.toFile "config" (lib.concatStringsSep "\n" (map (domain: "local-zone: \"${domain}\" static") cleaned-domains));
                 in
                 stdenv.mkDerivation {
                   pname = "nixos-adblock-unbound";
