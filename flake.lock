@@ -16,6 +16,22 @@
         "type": "github"
       }
     },
+    "lancache-domains": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1679999806,
+        "narHash": "sha256-oDZ2pSf8IgofRS4HaRppGcd4kHQj48AC9dkS++avYy8=",
+        "owner": "uklans",
+        "repo": "cache-domains",
+        "rev": "31b2ba1e0a7c419327cb97f589b508d78b9aecbf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "uklans",
+        "repo": "cache-domains",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 0,
@@ -31,6 +47,7 @@
     "root": {
       "inputs": {
         "adblockStevenBlack": "adblockStevenBlack",
+        "lancache-domains": "lancache-domains",
         "nixpkgs": "nixpkgs"
       }
     }
