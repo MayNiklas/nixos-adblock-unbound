@@ -28,27 +28,27 @@
             nixos-adblock-unbound = pkgs.callPackage
               ({ lib
                , stdenv
-               , src ? (adblockStevenBlack + "/hosts")
+               , adlist ? (adblockStevenBlack + "/hosts")
                , ...
                }:
                 stdenv.mkDerivation {
                   pname = "nixos-adblock-unbound";
                   version = "1.0.0";
                   phases = [ "installPhase" ];
-                  installPhase =
-                    ''
-                      CONFIG_FILE=./tmp.conf
-                      # Read the upstream file line by line
-                      while read -r LINE || [ -n "$LINE" ];
-                      do
-                        # If line begins with "0.0.0.0" it is a valid line
-                        if [[ ''${LINE:0:7} == "0.0.0.0" ]]; then
-                          domain=$(echo $LINE | awk '{print $2}')
-                          echo "local-zone: \""$domain"\" static" >> $CONFIG_FILE
-                        fi
-                      done < ${adblockStevenBlack}/hosts
-                      cat $CONFIG_FILE | tr '[:upper:]' '[:lower:]' | sort -u >  $out
-                    '';
+                  installPhase = ''
+                    CONFIG_FILE=./tmp.conf
+                    touch $CONFIG_FILE
+                    # Read the upstream file line by line
+                    while read -r LINE || [ -n "$LINE" ];
+                    do
+                      # If line begins with "0.0.0.0" it is a valid line
+                      if [[ ''${LINE:0:7} == "0.0.0.0" ]]; then
+                        domain=$(echo $LINE | awk '{print $2}')
+                        echo "local-zone: \""$domain"\" static" >> $CONFIG_FILE
+                      fi
+                    done < ${adlist}
+                    cat $CONFIG_FILE | tr '[:upper:]' '[:lower:]' | sort -u >  $out
+                  '';
                   meta = with pkgs.lib; {
                     description = "converts pihole lists to unbound";
                     homepage =
@@ -58,7 +58,7 @@
                   };
                 })
               { };
-            unbound-adblockStevenBlack = self.packages.${system}.nixos-adblock-unbound.override { src = (adblockStevenBlack + "/hosts"); };
+            unbound-adblockStevenBlack = self.packages.${system}.nixos-adblock-unbound.override { adlist = (adblockStevenBlack + "/hosts"); };
           });
     };
 }
