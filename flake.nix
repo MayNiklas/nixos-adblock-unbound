@@ -31,23 +31,17 @@
                , adlist ? (adblockStevenBlack + "/hosts")
                , ...
                }:
+                let
+                  lines = lib.splitString "\n" (lib.readFile adlist);
+                  domains = lib.filter (line: lib.hasPrefix "0.0.0.0" line) lines;
+                  config-file = builtins.toFile "config" (lib.concatStringsSep "\n" (map (domain: "local-zone: \"${(lib.strings.removePrefix "0.0.0.0 " domain)}\" static") domains));
+                in
                 stdenv.mkDerivation {
                   pname = "nixos-adblock-unbound";
                   version = "1.0.0";
                   phases = [ "installPhase" ];
                   installPhase = ''
-                    CONFIG_FILE=./tmp.conf
-                    touch $CONFIG_FILE
-                    # Read the upstream file line by line
-                    while read -r LINE || [ -n "$LINE" ];
-                    do
-                      # If line begins with "0.0.0.0" it is a valid line
-                      if [[ ''${LINE:0:7} == "0.0.0.0" ]]; then
-                        domain=$(echo $LINE | awk '{print $2}')
-                        echo "local-zone: \""$domain"\" static" >> $CONFIG_FILE
-                      fi
-                    done < ${adlist}
-                    cat $CONFIG_FILE | tr '[:upper:]' '[:lower:]' | sort -u >  $out
+                    cp ${config-file} $out
                   '';
                   meta = with pkgs.lib; {
                     description = "converts pihole lists to unbound";
@@ -62,3 +56,4 @@
           });
     };
 }
+
